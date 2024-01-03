@@ -22,4 +22,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Custom_Shaders\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Custom_Shaders\testVertexShader.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Custom_Shaders\testFragmentShader.txt" />
+  </ItemGroup>
 </Project>
