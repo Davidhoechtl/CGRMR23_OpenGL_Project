@@ -4,6 +4,12 @@
 #include "Custom_Shaders/Shader.h"
 #include "ImageLoader/ImageLoader.h" 
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include "Game/Objects/Rectangle.h"
+
 using namespace std;
 
 //Forward Declarations
@@ -42,15 +48,22 @@ int main()
     glViewport(0, 0, 800, 600);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO); // bind Vertex Array Object
-    
     // setup shader
     Shader ourShader("Custom_Shaders/testVertexShader.txt", "Custom_Shaders/testFragmentShader.txt");
     unsigned int texture = imageLoader.loadImage("Ressources/container.jpg");
 
-    SetupTriangle(); // setup triangle (configure VBO and bind it to VAO)
+    //unsigned int VAO;
+    //glGenVertexArrays(1, &VAO);
+    //glBindVertexArray(VAO); // bind Vertex Array Object
+
+    //SetupTriangle(); // setup triangle (configure VBO and bind it to VAO)
+
+    // x = 0, y = 0, width = 1, height = 1
+    Rectangle test(0.0f, 0.5f, 1.0f, 1.0f);
+    test.SetTexture(texture);
+
+    Rectangle test2(0.0f, -1.0f, 1.0f, 1.0f);
+    test2.SetTexture(texture);
 
     //rendering loop
     while (!glfwWindowShouldClose(window))
@@ -60,14 +73,27 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        ourShader.use();
+        test.Update();
+        test2.Update();
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
 
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+        test2.Render();
+        test.Render();
+
+        //glm::mat4 transform = glm::mat4(1.0f);
+        ////transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+        //transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        //ourShader.use();
+        //unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+        //glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
+        //glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_2D, texture);
+
+        //glBindVertexArray(VAO);
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        //glBindVertexArray(0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

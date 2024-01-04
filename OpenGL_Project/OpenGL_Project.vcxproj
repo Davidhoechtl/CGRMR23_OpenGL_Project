@@ -137,11 +137,14 @@
     <ClCompile Include="include\glad.c" />
     <ClCompile Include="include\stb_image_imp.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Game\Objects\Rectangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Custom_Shaders\Shader.h" />
+    <ClInclude Include="Game\Objects\GameObject.h" />
     <ClInclude Include="ImageLoader\ImageLoader.h" />
     <ClInclude Include="include\stb_image.h" />
+    <ClInclude Include="Game\Objects\Rectangle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Custom_Shaders\testVertexShader.txt" />
