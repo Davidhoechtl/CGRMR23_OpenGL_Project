@@ -26,15 +26,19 @@ class Rectangle : public GameObject
 			// here the model matrix can be manipulated
 			transform = glm::mat4(1.0f);
 			transform = glm::translate(transform, glm::vec3(X, Y, 0.0f));
+			transform = glm::scale(transform, glm::vec3(Width, Height, 1.0f));
 		}
 
-		void Render() override {
+		void Render(const glm::mat4 cameraProjectionMatrix) override {
 			if (shader == nullptr) {
 				std::cout << "ERROR::RECTANGLE::SHADER_NOT_SET" << std::endl;
 				return;
 			}
 
 			shader->use();
+
+			unsigned int projectionLoc = glGetUniformLocation(shader->ID, "projection");
+			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(cameraProjectionMatrix));
 
 			unsigned int transformLoc = glGetUniformLocation(shader->ID, "transform");
 			glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
@@ -77,10 +81,10 @@ class Rectangle : public GameObject
 		// model vertices
 		float vertices[32] = {
 			// positions          // colors           // texture coords
-			 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,    2.0f, 2.0f, // top right
-			 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,    2.0f, 0.0f, // bottom right
+			 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,    1.0f, 1.0f, // top right
+			 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,    1.0f, 0.0f, // bottom right
 			-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,    0.0f, 0.0f, // bottom left
-			-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,    0.0f, 2.0f  // top left 
+			-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,    0.0f, 1.0f  // top left 
 		};
 
 		unsigned int indices[6] = {

@@ -1,6 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <vector>
+#include <algorithm>
 #include "Custom_Shaders/Shader.h"
 #include "ImageLoader/ImageLoader.h" 
 
@@ -9,13 +11,23 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Game/Objects/Rectangle.h"
+#include "Game/Camera.h"
 
 using namespace std;
 
 //Forward Declarations
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window);
+void processInput(GLFWwindow* window, float delta);
 void SetupTriangle();
+
+// timing
+float deltaTime = 0.0f;	// time between current frame and last frame
+float lastFrame = 0.0f;
+
+Camera2D camera(0.0f, 0.0f, 1.0f, 100.0f);
+
+// game objects
+vector<GameObject*> gameObjects;
 
 int main()
 {
@@ -48,52 +60,45 @@ int main()
     glViewport(0, 0, 800, 600);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+    int viewportWidth, viewportHeight;
+    glfwGetFramebufferSize(window, &viewportWidth, &viewportHeight);
+
     // setup shader
     Shader ourShader("Custom_Shaders/testVertexShader.txt", "Custom_Shaders/testFragmentShader.txt");
     unsigned int texture = imageLoader.loadImage("Ressources/container.jpg");
 
-    //unsigned int VAO;
-    //glGenVertexArrays(1, &VAO);
-    //glBindVertexArray(VAO); // bind Vertex Array Object
-
-    //SetupTriangle(); // setup triangle (configure VBO and bind it to VAO)
-
-    // x = 0, y = 0, width = 1, height = 1
-    Rectangle test(0.0f, 0.5f, 1.0f, 1.0f);
+ 
+    // x = 200, y = 200, width = 150, height = 200
+    Rectangle test(200.0f, 200.0f, 150.0f, 200.0f);
     test.SetTexture(texture);
 
-    Rectangle test2(0.0f, -1.0f, 1.0f, 1.0f);
+    Rectangle test2(0.0f, -1.0f, 100.0f, 100.0f);
     test2.SetTexture(texture);
+
+    gameObjects.push_back(&test);
+    gameObjects.push_back(&test2);
 
     //rendering loop
     while (!glfwWindowShouldClose(window))
     {
-        processInput(window);
+        float currentFrame = static_cast<float>(glfwGetTime());
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        processInput(window, deltaTime);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        test.Update();
-        test2.Update();
+        for_each(gameObjects.begin(), gameObjects.end(), [](GameObject* obj) {
+            obj->Update();
+        });
 
+        glm::mat4 projectionMatrix = camera.GetProjectionMatrix(viewportWidth, viewportHeight);
 
-        test2.Render();
-        test.Render();
-
-        //glm::mat4 transform = glm::mat4(1.0f);
-        ////transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-        //transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-
-        //ourShader.use();
-        //unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-        //glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
-
-        //glActiveTexture(GL_TEXTURE0);
-        //glBindTexture(GL_TEXTURE_2D, texture);
-
-        //glBindVertexArray(VAO);
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        //glBindVertexArray(0);
+        for_each(gameObjects.begin(), gameObjects.end(), [projectionMatrix](GameObject* obj) {
+            obj-> Render(projectionMatrix);
+        });
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -111,10 +116,18 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 //handles all user input
-void processInput(GLFWwindow* window)
+void processInput(GLFWwindow* window, float delta)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.Y += camera.CameraSpeed * delta;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.Y -= camera.CameraSpeed * delta;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.X -= camera.CameraSpeed * delta;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.X += camera.CameraSpeed * delta;
 }
 
 void SetupTriangle() {

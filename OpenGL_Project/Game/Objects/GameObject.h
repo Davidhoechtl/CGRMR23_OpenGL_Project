@@ -34,7 +34,7 @@ class GameObject
 		virtual void Update() = 0;
 
 		// Method that gets called at the end of each frame
-		virtual void Render() = 0;
+		virtual void Render(const glm::mat4 cameraProjectionMatrix) = 0;
 
 	protected:
 		glm::mat4 transform = glm::mat4(1.0f);

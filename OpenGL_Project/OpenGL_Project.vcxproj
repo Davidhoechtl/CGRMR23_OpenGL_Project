@@ -141,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Custom_Shaders\Shader.h" />
+    <ClInclude Include="Game\Camera.h" />
     <ClInclude Include="Game\Objects\GameObject.h" />
     <ClInclude Include="ImageLoader\ImageLoader.h" />
     <ClInclude Include="include\stb_image.h" />
