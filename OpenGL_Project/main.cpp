@@ -11,6 +11,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Game/Objects/Rectangle.h"
+#include "Game/Objects/Triangle.h"
 #include "Game/Camera.h"
 
 using namespace std;
@@ -66,17 +67,21 @@ int main()
     // setup shader
     Shader ourShader("Custom_Shaders/testVertexShader.txt", "Custom_Shaders/testFragmentShader.txt");
     unsigned int texture = imageLoader.loadImage("Ressources/container.jpg");
-
- 
+    unsigned int roofTexture = imageLoader.loadImage("Ressources/BlueRoof.png");
     // x = 200, y = 200, width = 150, height = 200
-    Rectangle test(200.0f, 200.0f, 150.0f, 200.0f);
+    Rectangle test(0.0f, 0.0f, 150.0f, 150.0f);
     test.SetTexture(texture);
 
-    Rectangle test2(0.0f, -1.0f, 100.0f, 100.0f);
-    test2.SetTexture(texture);
+    //Rectangle test2(0.0f, -1.0f, 100.0f, 100.0f);
+    //test2.SetTexture(texture);
+
+    Triangle roof(0.0f, 125.0f, 150.0f, 100.0f);
+    roof.SetTexture(roofTexture);
+    //Shader triangleShader("Custom_Shaders/triangleVS.txt", "Custom_Shaders/triangleFS.txt");
 
     gameObjects.push_back(&test);
-    gameObjects.push_back(&test2);
+    //gameObjects.push_back(&test2);
+    gameObjects.push_back(&roof);
 
     //rendering loop
     while (!glfwWindowShouldClose(window))

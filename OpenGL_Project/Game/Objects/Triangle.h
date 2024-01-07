@@ -1,25 +1,22 @@
-#pragma once
-
 #include <glad/glad.h>
-#include "GameObject.h"
 
-class Rectangle : public GameObject
+class Triangle : public GameObject
 {
 	public:
 		int Width;
 		int Height;
 
-		Rectangle(float x, float y, float width, float height) : GameObject(x, y){
-			
+		Triangle(float x, float y, float width, float height) : GameObject(x, y) {
+
 			Width = width;
 			Height = height;
 
-			SetupRectangle();
+			SetupTriangle();
 		}
 
-		~Rectangle() {
+		~Triangle() {
 			// cleanup gameobject
-			free(shader);
+			//free(shader);
 		}
 
 		void Update() override {
@@ -31,39 +28,44 @@ class Rectangle : public GameObject
 
 		void Render(const glm::mat4 cameraProjectionMatrix) override {
 			if (shader == nullptr) {
-				std::cout << "ERROR::RECTANGLE::SHADER_NOT_SET" << std::endl;
+				std::cout << "ERROR::TRIANGLE::SHADER_NOT_SET" << std::endl;
 				return;
 			}
 
 			shader->use();
-
+			
 			unsigned int projectionLoc = glGetUniformLocation(shader->ID, "projection");
 			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(cameraProjectionMatrix));
 
 			unsigned int transformLoc = glGetUniformLocation(shader->ID, "transform");
 			glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
-
+			
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture);
 
 			glBindVertexArray(VAO);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
 			glBindVertexArray(0);
 		}
 
 	private:
-		void SetupRectangle() {
-			glGenVertexArrays(1, &VAO);
-			glBindVertexArray(VAO); // bind Vertex Array Object
+		// model vertices
+		float vertices[24] = {
+				-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 0.0f,  // bottom right
+				0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,   // bottom left
+				0.0f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.5f, 1.0f,  // top
+		};
+
+		void SetupTriangle() {
 
 			// setup Vertex Buffer Object (VBO)
+			//unsigned int VBO, VAO;
+			glGenVertexArrays(1, &VAO);
 			glGenBuffers(1, &VBO);
+			glBindVertexArray(VAO);
+
 			glBindBuffer(GL_ARRAY_BUFFER, VBO);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-			glGenBuffers(1, &EBO);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 			//position attribute
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -76,20 +78,7 @@ class Rectangle : public GameObject
 			//texture attribute
 			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 			glEnableVertexAttribArray(2);
+			
 		}
-
-		// model vertices
-		float vertices[32] = {
-			// positions          // colors           // texture coords
-			 0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 1.0f,    1.0f, 1.0f, // top right
-			 0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 1.0f,    1.0f, 0.0f, // bottom right
-			-0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 1.0f,    0.0f, 0.0f, // bottom left
-			-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 1.0f,    0.0f, 1.0f  // top left 
-		};
-
-		unsigned int indices[6] = {
-			0, 1, 3, // first triangle
-			1, 2, 3  // second triangle
-		};
+		
 };
-
