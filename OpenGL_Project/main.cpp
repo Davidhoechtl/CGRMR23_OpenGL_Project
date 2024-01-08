@@ -5,10 +5,14 @@
 #include <algorithm>
 #include "Custom_Shaders/Shader.h"
 #include "ImageLoader/ImageLoader.h" 
+#include "TextRenderer/TextRenderer.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 #include "Game/Objects/Rectangle.h"
 #include "Game/Objects/Triangle.h"
@@ -33,7 +37,7 @@ vector<GameObject*> gameObjects;
 int main()
 {
     ImageLoader imageLoader;
-
+    
     //init glfw (OpenGL Version: 4.6, Core Profile)
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -65,6 +69,7 @@ int main()
     glfwGetFramebufferSize(window, &viewportWidth, &viewportHeight);
 
     // setup shader
+    TextRenderer textRenderer("fonts/arial.ttf", 48);
     Shader ourShader("Custom_Shaders/testVertexShader.txt", "Custom_Shaders/testFragmentShader.txt");
     unsigned int texture = imageLoader.loadImage("Ressources/container.jpg", false);
     unsigned int roofTexture = imageLoader.loadImage("Ressources/BlueRoof.png", true);
@@ -112,6 +117,10 @@ int main()
         for_each(gameObjects.begin(), gameObjects.end(), [projectionMatrix](GameObject* obj) {
             obj-> Render(projectionMatrix);
         });
+
+        glm::mat4 textProjectionMatrix = glm::ortho(0.0f, static_cast<float>(viewportWidth), 0.0f, static_cast<float>(viewportHeight));
+
+        textRenderer.RenderText("Coins: 0/1", 620.0f, 550.0f, 0.7f, glm::vec3(1, 1.0f, 1.0f), textProjectionMatrix);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

@@ -110,7 +110,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)lib-vc2022;$(ProjectDir)glad.c;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,12 +147,15 @@
     <ClInclude Include="ImageLoader\ImageLoader.h" />
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="Game\Objects\Rectangle.h" />
+    <ClInclude Include="TextRenderer\TextRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Custom_Shaders\testVertexShader.txt" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Custom_Shaders\testFragmentShader.txt" />
+    <Text Include="Custom_Shaders\textRenderingFragmentShader.txt" />
+    <Text Include="Custom_Shaders\textRenderingVertexShader.txt" />
     <Text Include="Custom_Shaders\triangleFS.txt" />
     <Text Include="Custom_Shaders\triangleVS.txt" />
   </ItemGroup>

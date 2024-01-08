@@ -53,6 +53,9 @@
     <ClInclude Include="Game\Objects\Triangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TextRenderer\TextRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Custom_Shaders\testVertexShader.txt" />
@@ -61,5 +64,7 @@
     <Text Include="Custom_Shaders\testFragmentShader.txt" />
     <Text Include="Custom_Shaders\triangleVS.txt" />
     <Text Include="Custom_Shaders\triangleFS.txt" />
+    <Text Include="Custom_Shaders\textRenderingVertexShader.txt" />
+    <Text Include="Custom_Shaders\textRenderingFragmentShader.txt" />
   </ItemGroup>
 </Project>
