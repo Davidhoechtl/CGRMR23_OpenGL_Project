@@ -66,8 +66,10 @@ int main()
 
     // setup shader
     Shader ourShader("Custom_Shaders/testVertexShader.txt", "Custom_Shaders/testFragmentShader.txt");
-    unsigned int texture = imageLoader.loadImage("Ressources/container.jpg");
-    unsigned int roofTexture = imageLoader.loadImage("Ressources/BlueRoof.png");
+    unsigned int texture = imageLoader.loadImage("Ressources/container.jpg", false);
+    unsigned int roofTexture = imageLoader.loadImage("Ressources/BlueRoof.png", true);
+    unsigned int coinTexture = imageLoader.loadTransparentImage("Ressources/coin.png", true);
+    
     // x = 200, y = 200, width = 150, height = 200
     Rectangle test(0.0f, 0.0f, 150.0f, 150.0f);
     test.SetTexture(texture);
@@ -77,11 +79,17 @@ int main()
 
     Triangle roof(0.0f, 125.0f, 150.0f, 100.0f);
     roof.SetTexture(roofTexture);
-    //Shader triangleShader("Custom_Shaders/triangleVS.txt", "Custom_Shaders/triangleFS.txt");
+
+    Rectangle coin(100.0f, 100.0f, 50.0f, 50.0f);
+    coin.SetTexture(coinTexture);
 
     gameObjects.push_back(&test);
     //gameObjects.push_back(&test2);
     gameObjects.push_back(&roof);
+    gameObjects.push_back(&coin);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //rendering loop
     while (!glfwWindowShouldClose(window))
