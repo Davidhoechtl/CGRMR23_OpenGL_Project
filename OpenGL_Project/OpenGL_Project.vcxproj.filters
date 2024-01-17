@@ -56,6 +56,12 @@
     <ClInclude Include="TextRenderer\TextRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TileMapRenderer\TileMapRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMapRenderer\TileMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Custom_Shaders\testVertexShader.txt" />
@@ -66,5 +72,7 @@
     <Text Include="Custom_Shaders\triangleFS.txt" />
     <Text Include="Custom_Shaders\textRenderingVertexShader.txt" />
     <Text Include="Custom_Shaders\textRenderingFragmentShader.txt" />
+    <Text Include="Custom_Shaders\tileMapFragmentShader.txt" />
+    <Text Include="Custom_Shaders\tileMapVertexShader.txt" />
   </ItemGroup>
 </Project>

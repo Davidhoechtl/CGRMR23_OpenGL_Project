@@ -148,6 +148,8 @@
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="Game\Objects\Rectangle.h" />
     <ClInclude Include="TextRenderer\TextRenderer.h" />
+    <ClInclude Include="TileMapRenderer\TileMap.h" />
+    <ClInclude Include="TileMapRenderer\TileMapRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Custom_Shaders\testVertexShader.txt" />
@@ -156,6 +158,8 @@
     <Text Include="Custom_Shaders\testFragmentShader.txt" />
     <Text Include="Custom_Shaders\textRenderingFragmentShader.txt" />
     <Text Include="Custom_Shaders\textRenderingVertexShader.txt" />
+    <Text Include="Custom_Shaders\tileMapFragmentShader.txt" />
+    <Text Include="Custom_Shaders\tileMapVertexShader.txt" />
     <Text Include="Custom_Shaders\triangleFS.txt" />
     <Text Include="Custom_Shaders\triangleVS.txt" />
   </ItemGroup>

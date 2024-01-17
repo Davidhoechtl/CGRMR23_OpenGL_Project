@@ -18,12 +18,15 @@
 #include "Game/Objects/Triangle.h"
 #include "Game/Camera.h"
 
+#include "TileMapRenderer/TileMap.h";
+#include "TileMapRenderer/TileMapRenderer.h"
+
 using namespace std;
 
 //Forward Declarations
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window, float delta);
-void SetupTriangle();
+GLenum errorCheck();
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
@@ -88,6 +91,16 @@ int main()
     Rectangle coin(100.0f, 100.0f, 50.0f, 50.0f);
     coin.SetTexture(coinTexture);
 
+    //Map
+    TileMap tileMap(64, 64);
+
+    for (int i = 0; i < tileMap.GetSize(); i++)
+    {
+        tileMap.Tiles[i] = (unsigned char)rand() % 4;
+    }
+    tileMap.TileSetHandle = imageLoader.loadImage("Ressources/container.jpg", false);
+    TileMapRenderer tileMapRenderer(tileMap);
+    
     gameObjects.push_back(&test);
     //gameObjects.push_back(&test2);
     gameObjects.push_back(&roof);
@@ -117,7 +130,9 @@ int main()
         for_each(gameObjects.begin(), gameObjects.end(), [projectionMatrix](GameObject* obj) {
             obj-> Render(projectionMatrix);
         });
-
+        errorCheck();
+        tileMapRenderer.Render(projectionMatrix);
+        errorCheck();
         glm::mat4 textProjectionMatrix = glm::ortho(0.0f, static_cast<float>(viewportWidth), 0.0f, static_cast<float>(viewportHeight));
 
         textRenderer.RenderText("Coins: 0/1", 620.0f, 550.0f, 0.7f, glm::vec3(1, 1.0f, 1.0f), textProjectionMatrix);
@@ -126,6 +141,7 @@ int main()
         glfwPollEvents();
     }
 
+    errorCheck();
     //cleans all GLFW ressources
     glfwTerminate();
     return 0;
@@ -152,40 +168,11 @@ void processInput(GLFWwindow* window, float delta)
         camera.X += camera.CameraSpeed * delta;
 }
 
-void SetupTriangle() {
-    // vertecies of the triangle (z = 0.0f -> no depth so it appears 2D)
-    float vertices[] = {
-        0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   1.0f, 1.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,   // bottom left
-        -0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,  // top left
-        0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top right
-    };
-
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
-    };
-
-    // setup Vertex Buffer Object (VBO)
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    unsigned int EBO; // Element Buffer Object (EBO)
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    //position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    //color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    //texture attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
+GLenum errorCheck()
+{
+    GLenum code;
+    const GLubyte* string;
+    code = glGetError();
+    
+    return code;
 }
