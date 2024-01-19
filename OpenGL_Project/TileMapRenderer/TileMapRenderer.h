@@ -10,6 +10,8 @@
 #include "../Custom_Shaders/Shader.h"
 #include <vector>
 
+using namespace std;
+
 class TileMapRenderer 
 {
 public:
@@ -21,29 +23,67 @@ public:
 
 	TileMapRenderer(TileMap tileMap)
 	{
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClipControl(GL_UPPER_LEFT, GLM_DEPTH_NEGATIVE_ONE_TO_ONE);
+		//glClearColor(0.2f, 1.0f, 0.3f, 1.0f);
+		//glClipControl(GL_UPPER_LEFT, GL_NEGATIVE_ONE_TO_ONE);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         Center = glm::vec2(0.0f, 0.0f);
         _TileMap = tileMap;
         CreateShader();
-        GenerateVertexBufferObject();
+        GenerateVertexBufferObject();             
         GenerateVertexArrayObject();
 	}
 
     void Render(const glm::mat4 projectionMatrix)
     {
+        if (shader == nullptr) {
+            std::cout << "ERROR::TILEMAP::SHADER_NOT_SET" << std::endl;
+            return;
+        }
+        shader->use();
+
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glBindTexture(GL_TEXTURE_2D, _TileMap.TileSetHandle);
-        glBindVertexArray(VAO);
-        
         unsigned int projectionLoc = glGetUniformLocation(shader->ID, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-        
-        shader->use();
+
+        unsigned int transformLoc = glGetUniformLocation(shader->ID, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(GetTransformMatrix()));
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, _TileMap.TileSetHandle);
+
+        glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, _TileMap.GetSize() * 6);
+        glBindVertexArray(0);
+    }
+
+    glm::mat4 GetProjectionMatrix(float viewportWidth, float viewportHeight, float cameraX, float cameraY) 
+    {
+        float left = cameraX - (viewportWidth / 2);
+        float right = cameraX + (viewportWidth / 2);
+        float bottom = cameraY - (viewportHeight / 2);
+        float top = cameraY + (viewportHeight / 2);
+
+        glm::mat4 projection = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
+        projection = glm::scale(projection, glm::vec3(TileSize, TileSize, 1.0f));
+        //projection = glm::scale(projection, glm::vec3(2.0f / backBufferWidth, 2.0f / backBufferHeight, 1.0f));
+
+        return projection;
+    }
+
+    glm::mat4 GetTransformMatrix() 
+    {
+        //shift 20, 20 to the left/down
+        glm::vec3 objectCenter = glm::vec3(20.0f, 20.0f, 0.0f);
+
+        glm::vec3 targetPoint = glm::vec3(-Center.x, -Center.y, 0);
+
+        glm::vec3 translationVector = targetPoint - objectCenter;
+
+        glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), translationVector);
+        
+        return translationMatrix;
     }
 
     ~TileMapRenderer()
@@ -73,7 +113,6 @@ private:
     void CreateShader()
     {
 		shader = new Shader("Custom_Shaders/tileMapVertexShader.txt", "Custom_Shaders/tileMapFragmentShader.txt");
-		
     }
 
     void GenerateVertexBufferObject()
@@ -81,14 +120,7 @@ private:
         glGenBuffers(1, &VBO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-        const int floatCount = _TileMap.GetSize() // for each tile
-            * 6 // there are 6 vertices (two triangles, each with 3 vertices)
-            * 2 // each vertex has two components: Position and Texcoord
-            * 2; // each component has two fields: x and y
         vector<float> vertexData;
-        vertexData.resize(floatCount);
-        //float* vertexData = new float[floatCount];
-        //int i = 0;
         for (int x = 0; x < _TileMap.Width; x++)
         {
             for (int y = 0; y < _TileMap.Height; y++)
@@ -103,42 +135,36 @@ private:
                 vertexData.push_back(y);// position y
                 vertexData.push_back(tx0); // texcoord x
                 vertexData.push_back(ty0); // texcoord y
-                //i += 4;
 
                 // vertex 1 (top right)
                 vertexData.push_back(x + 1); // position x
                 vertexData.push_back(y);// position y
                 vertexData.push_back(tx0 + tySize); // texcoord x
                 vertexData.push_back(ty0); // texcoord y
-                //i += 4;
 
                 // vertex 2 (bottom left)
                 vertexData.push_back(x); // position x
                 vertexData.push_back(y + 1);// position y
                 vertexData.push_back(tx0); // texcoord x
                 vertexData.push_back(ty0 + tySize); // texcoord y
-                //i += 4;
 
                 // vertex 3 (top right)
                 vertexData.push_back(x + 1); // position x
                 vertexData.push_back(y);// position y
                 vertexData.push_back(tx0 + tySize); // texcoord x
                 vertexData.push_back(ty0); // texcoord y
-                //i += 4;
 
                 // vertex 4 (bottom left)
                 vertexData.push_back(x); // position x
                 vertexData.push_back(y + 1);// position y
                 vertexData.push_back(tx0); // texcoord x
                 vertexData.push_back(ty0 + tySize); // texcoord y
-                //i += 4;
 
                 // vertex 5 (bottom right)
                 vertexData.push_back(x + 1); // position x
                 vertexData.push_back(y + 1);// position y
                 vertexData.push_back(tx0 + tySize); // texcoord x
                 vertexData.push_back(ty0 + tySize); // texcoord y
-                //i += 4;
             }
         }
         glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(float), &vertexData[0], GL_STATIC_DRAW);
