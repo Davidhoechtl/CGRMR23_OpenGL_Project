@@ -23,6 +23,7 @@ class Triangle : public GameObject
 			// here the model matrix can be manipulated
 			transform = glm::mat4(1.0f);
 			transform = glm::translate(transform, glm::vec3(X, Y, 0.0f));
+			transform = glm::rotate(transform, glm::radians(rotationAngle), glm::vec3(0.0, 0.0, 1.0));
 			transform = glm::scale(transform, glm::vec3(Width, Height, 1.0f));
 		}
 
@@ -39,13 +40,34 @@ class Triangle : public GameObject
 
 			unsigned int transformLoc = glGetUniformLocation(shader->ID, "transform");
 			glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
-			
+	
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture);
 
 			glBindVertexArray(VAO);
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 			glBindVertexArray(0);
+		}
+
+		//sets vertices color
+		void SetColor(float r, float g, float b)
+		{
+			vertices[3] = r;
+			vertices[4] = g;
+			vertices[5] = b;
+			vertices[11] = r;
+			vertices[12] = g;
+			vertices[13] = b;
+			vertices[19] = r;
+			vertices[20] = g;
+			vertices[21] = b;
+
+			glDeleteVertexArrays(1, &VAO);
+			VAO = 0;
+
+			glDeleteBuffers(1, &VBO);
+			VBO = 0;
+			SetupTriangle();
 		}
 
 	private:
