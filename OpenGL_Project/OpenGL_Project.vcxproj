@@ -155,6 +155,7 @@
     <None Include="Custom_Shaders\testVertexShader.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Custom_Shaders\noTextureFragmentShader.txt" />
     <Text Include="Custom_Shaders\testFragmentShader.txt" />
     <Text Include="Custom_Shaders\textRenderingFragmentShader.txt" />
     <Text Include="Custom_Shaders\textRenderingVertexShader.txt" />

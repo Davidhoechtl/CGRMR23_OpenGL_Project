@@ -74,5 +74,6 @@
     <Text Include="Custom_Shaders\textRenderingFragmentShader.txt" />
     <Text Include="Custom_Shaders\tileMapFragmentShader.txt" />
     <Text Include="Custom_Shaders\tileMapVertexShader.txt" />
+    <Text Include="Custom_Shaders\noTextureFragmentShader.txt" />
   </ItemGroup>
 </Project>

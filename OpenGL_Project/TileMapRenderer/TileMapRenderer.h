@@ -74,8 +74,11 @@ public:
 
     glm::mat4 GetTransformMatrix() 
     {
-        //shift 20, 20 to the left/down
-        glm::vec3 objectCenter = glm::vec3(20.0f, 20.0f, 0.0f);
+        //moves tileMap to center of screen
+        float tileMapWidth = (float)_TileMap.Width;
+        float tileMapHeight = (float)_TileMap.Height;
+        
+        glm::vec3 objectCenter = glm::vec3(tileMapWidth / 2, tileMapHeight / 2, 0.0f);
 
         glm::vec3 targetPoint = glm::vec3(-Center.x, -Center.y, 0);
 

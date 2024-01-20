@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <cmath>
 
 class GameObject
 {
@@ -20,6 +21,11 @@ class GameObject
 			shader = new Shader("Custom_Shaders/testVertexShader.txt", "Custom_Shaders/testFragmentShader.txt");
 		}
 
+		void SetRotationZAxis(float angle) 
+		{
+			rotationAngle = angle;
+		}
+
 		// Overrides the default shader
 		void SetShader(Shader* shader) {
 			this->shader = shader;
@@ -28,7 +34,7 @@ class GameObject
 		// Sets a texture for the object
 		void SetTexture(unsigned int texture) {
 			this->texture = texture;
-		}	
+		}
 
 		// Meethod that gets called at the start of each frame
 		virtual void Update() = 0;
@@ -38,6 +44,7 @@ class GameObject
 
 	protected:
 		glm::mat4 transform = glm::mat4(1.0f);
+		float rotationAngle = 0;
 
 		Shader* shader = nullptr;
 		unsigned int texture = 0;
