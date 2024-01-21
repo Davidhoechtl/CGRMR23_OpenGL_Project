@@ -36,7 +36,7 @@ class GameObject
 			this->texture = texture;
 		}
 
-		// Meethod that gets called at the start of each frame
+		// Method that gets called at the start of each frame
 		virtual void Update() = 0;
 
 		// Method that gets called at the end of each frame
