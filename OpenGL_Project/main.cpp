@@ -20,6 +20,7 @@
 
 #include "TileMapRenderer/TileMap.h";
 #include "TileMapRenderer/TileMapRenderer.h"
+#include "Game/Utils/StaticGameInfo.h"
 
 using namespace std;
 
@@ -29,6 +30,7 @@ void processInput(GLFWwindow* window, float delta);
 GLenum errorCheck();
 
 // timing
+static float GameTime = 0;
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
@@ -260,6 +262,7 @@ int main()
     {
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
+        StaticGameInfo::GameTime += deltaTime;
         lastFrame = currentFrame;
 
         processInput(window, deltaTime);
@@ -268,7 +271,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         for_each(gameObjects.begin(), gameObjects.end(), [](GameObject* obj) {
-            obj->Update();
+            obj->Update(deltaTime);
         });
 
         glm::mat4 projectionMatrix = camera.GetProjectionMatrix(viewportWidth, viewportHeight);

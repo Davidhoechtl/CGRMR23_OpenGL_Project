@@ -22,7 +22,7 @@ class Rectangle : public GameObject
 			//free(shader);
 		}
 
-		void Update() override {
+		void Update(float delta) override {
 			// here the model matrix can be manipulated
 			transform = glm::mat4(1.0f);
 			transform = glm::translate(transform, glm::vec3(X, Y, 0.0f));

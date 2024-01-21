@@ -37,7 +37,7 @@ class GameObject
 		}
 
 		// Meethod that gets called at the start of each frame
-		virtual void Update() = 0;
+		virtual void Update(float delta) = 0;
 
 		// Method that gets called at the end of each frame
 		virtual void Render(const glm::mat4 cameraProjectionMatrix) = 0;

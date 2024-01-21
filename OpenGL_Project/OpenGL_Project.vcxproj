@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,6 +123,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,13 +135,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\AnimationPlayer\AnimationTrack.cpp" />
+    <ClCompile Include="Game\AnimationPlayer\AnimationPlayer.cpp" />
+    <ClCompile Include="Game\Utils\StaticGameInfo.cpp" />
     <ClCompile Include="ImageLoader\ImageLoader.cpp" />
     <ClCompile Include="include\glad.c" />
     <ClCompile Include="include\stb_image_imp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Objects\Rectangle.cpp" />
+    <ClCompile Include="Game\Objects\Characters\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\AnimationPlayer\AnimationTrack.h" />
+    <ClInclude Include="Game\AnimationPlayer\AnimationPlayer.h" />
     <ClInclude Include="Custom_Shaders\Shader.h" />
     <ClInclude Include="Game\Camera.h" />
     <ClInclude Include="Game\Objects\GameObject.h" />
@@ -147,6 +155,8 @@
     <ClInclude Include="ImageLoader\ImageLoader.h" />
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="Game\Objects\Rectangle.h" />
+    <ClInclude Include="Game\Utils\StaticGameInfo.h" />
+    <ClInclude Include="Game\Objects\Characters\Player.h" />
     <ClInclude Include="TextRenderer\TextRenderer.h" />
     <ClInclude Include="TileMapRenderer\TileMap.h" />
     <ClInclude Include="TileMapRenderer\TileMapRenderer.h" />
