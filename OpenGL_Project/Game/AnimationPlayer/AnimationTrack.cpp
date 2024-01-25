@@ -24,11 +24,11 @@ vector<int> getTextureIds(const string& ressourceFolder, ImageLoader& imageLoade
 			string extension = entry.path().extension().string();
 
 			int textureId = -1;
-			if (extension == "png") {
-				textureId = imageLoader.loadTransparentImage(filePath.c_str(), false);
+			if (extension == ".png") {
+				textureId = imageLoader.loadTransparentImage(filePath.c_str(), true);
 			}
-			else if (extension == "jpg") {
-				textureId = imageLoader.loadImage(filePath.c_str(), false);
+			else if (extension == ".jpg") {
+				textureId = imageLoader.loadImage(filePath.c_str(), true);
 			}
 			else {
 				throw exception("File extension not supported");
@@ -45,7 +45,7 @@ vector<int> getTextureIds(const string& ressourceFolder, ImageLoader& imageLoade
 	return textureIds;
 }
 
-AnimationTrack::AnimationTrack(ImageLoader imageLoader, string ressourceFolder, string name, float interval)
+AnimationTrack::AnimationTrack(ImageLoader imageLoader, string ressourceFolder, string name, int interval)
 {
 	this->intervalInMilliseconds = interval;
 	this->textureIds = getTextureIds(ressourceFolder, imageLoader);
@@ -55,7 +55,7 @@ AnimationTrack::AnimationTrack(ImageLoader imageLoader, string ressourceFolder, 
 
 int AnimationTrack::GetNextTextureId()
 {
-	int time = StaticGameInfo::GameTime;
+	int time = StaticGameInfo::GameTime * 1000;
 	int cyrcleTime = time % timeOfOneCyrcleInMilliseconds;
 	int index = cyrcleTime / this->intervalInMilliseconds;
 	return this->textureIds[index];

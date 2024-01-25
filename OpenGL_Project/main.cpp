@@ -17,6 +17,7 @@
 #include "Game/Objects/Rectangle.h"
 #include "Game/Objects/Triangle.h"
 #include "Game/Camera.h"
+#include "Game/Objects/Characters/Player.h"
 
 #include "TileMapRenderer/TileMap.h";
 #include "TileMapRenderer/TileMapRenderer.h"
@@ -37,7 +38,7 @@ static float GameTime = 0;
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
-Camera2D camera(0.0f, 0.0f, 1.0f, 300.0f);
+Player* player = nullptr;
 
 // game objects
 vector<GameObject*> gameObjects;
@@ -94,6 +95,8 @@ int main()
 
 	Rectangle coin(100.0f, 100.0f, 50.0f, 50.0f);
 	coin.SetTexture(coinTexture);
+
+	player = new Player(200, 200);
 
 	//FARMING HOUSE
 	Rectangle farmingHouse1(-600.0f, 430.0f, 170.0f, 120.0f);
@@ -709,6 +712,7 @@ int main()
 	createFarmField(&tileMap, 33, 33, 11, 6);
 	TileMapRenderer tileMapRenderer(tileMap);
 
+	gameObjects.push_back(player);
 	gameObjects.push_back(&coin);
 	gameObjects.push_back(&farmingHouse1);
 	gameObjects.push_back(&farmingHouse2);
@@ -896,6 +900,8 @@ int main()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	Camera2D* camera = player->GetCamera();
+
     //rendering loop
     while (!glfwWindowShouldClose(window))
     {
@@ -913,14 +919,14 @@ int main()
             obj->Update(deltaTime);
         });
 
-		glm::mat4 projectionMatrix = camera.GetProjectionMatrix(viewportWidth, viewportHeight);
+		glm::mat4 projectionMatrix = camera->GetProjectionMatrix(viewportWidth, viewportHeight);
 
-		glm::mat4 tileMapProjectionMatrix = tileMapRenderer.GetProjectionMatrix(viewportWidth, viewportHeight, camera.X, camera.Y);
+		glm::mat4 tileMapProjectionMatrix = tileMapRenderer.GetProjectionMatrix(viewportWidth, viewportHeight, camera->X, camera->Y);
 		tileMapRenderer.Render(tileMapProjectionMatrix);
 
 		for_each(gameObjects.begin(), gameObjects.end(), [projectionMatrix](GameObject* obj) {
 			obj->Render(projectionMatrix);
-			});
+		});
 
 		glm::mat4 textProjectionMatrix = glm::ortho(0.0f, static_cast<float>(viewportWidth), 0.0f, static_cast<float>(viewportHeight));
 		textRenderer.RenderText("Coins: 0/1", 620.0f, 550.0f, 0.7f, glm::vec3(1, 1.0f, 1.0f), textProjectionMatrix);
@@ -928,6 +934,8 @@ int main()
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
+	delete(player);
 
 	//cleans all GLFW ressources
 	glfwTerminate();
@@ -943,16 +951,27 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 //handles all user input
 void processInput(GLFWwindow* window, float delta)
 {
+	player->NotifyInput(' ');
+
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.Y += camera.CameraSpeed * delta;
+	{
+		player->NotifyInput('w');
+	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.Y -= camera.CameraSpeed * delta;
+	{
+		player->NotifyInput('s');
+	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.X -= camera.CameraSpeed * delta;
+	{
+		player->NotifyInput('a');
+	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.X += camera.CameraSpeed * delta;
+	{
+		player->NotifyInput('d');
+	}
 }
 
 GLenum errorCheck()

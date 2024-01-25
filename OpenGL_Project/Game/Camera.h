@@ -9,13 +9,13 @@ class Camera2D
 	public:
 		float X, Y;
 		float Zoom;
-		float CameraSpeed;
 
-		Camera2D(float x, float y, float zoom, float cameraSpeed) {
+		Camera2D() : X(0.0f), Y(0.0f), Zoom(1.0f) { }
+
+		Camera2D(float x, float y, float zoom) {
 			X = x;
 			Y = y;
 			Zoom = zoom;
-			CameraSpeed = cameraSpeed;
 		}
 
 		glm::mat4 GetProjectionMatrix(const float& viewportWidth, const float& viewportHeight) {

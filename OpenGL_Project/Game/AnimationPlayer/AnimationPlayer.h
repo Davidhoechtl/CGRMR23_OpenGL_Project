@@ -8,12 +8,12 @@ class AnimationPlayer
 {
 	public:
 		void SetCurrentTrackByName(string trackName);
-		void AddTrack(AnimationTrack track);
+		void AddTrack(AnimationTrack* track);
 		int GetNextTextureId();
 
 		~AnimationPlayer();
 
 	private:
-		vector<AnimationTrack> tracks;
-		AnimationTrack currentTrack;
+		vector<AnimationTrack*> tracks;
+		AnimationTrack* currentTrack;
 };

@@ -86,6 +86,9 @@
     <ClInclude Include="Game\Objects\Characters\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Utils\Vector2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Custom_Shaders\testVertexShader.txt" />

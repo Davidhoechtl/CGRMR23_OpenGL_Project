@@ -10,8 +10,9 @@ class AnimationTrack
 	public:
 		string name;
 
-		AnimationTrack(ImageLoader imageLoader, string ressourceFolder, string name, float interval);
+		AnimationTrack(ImageLoader imageLoader, string ressourceFolder, string name, int interval);
 		int GetNextTextureId();
+
 		~AnimationTrack();
 
 	private:

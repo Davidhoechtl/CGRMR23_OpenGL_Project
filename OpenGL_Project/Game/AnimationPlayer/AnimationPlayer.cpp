@@ -2,9 +2,9 @@
 
 void AnimationPlayer::SetCurrentTrackByName(string trackName)
 {
-	for (AnimationTrack track : this->tracks)
+	for (AnimationTrack* track : this->tracks)
 	{
-		if (track.name == trackName)
+		if (track->name == trackName)
 		{
 			this->currentTrack = track;
 			return;
@@ -12,20 +12,20 @@ void AnimationPlayer::SetCurrentTrackByName(string trackName)
 	}
 }
 
-void AnimationPlayer::AddTrack(AnimationTrack track)
+void AnimationPlayer::AddTrack(AnimationTrack* track)
 {
 	this->tracks.push_back(track);
 }
 
 int AnimationPlayer::GetNextTextureId()
 {
-	return this->currentTrack.GetNextTextureId();
+	return this->currentTrack->GetNextTextureId();
 }
 
 AnimationPlayer::~AnimationPlayer()
 {
-	for (AnimationTrack track : this->tracks)
+	for (AnimationTrack* track : this->tracks)
 	{
-		track.~AnimationTrack();
+		track->~AnimationTrack();
 	}
 }

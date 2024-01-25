@@ -1,0 +1,87 @@
+#include "Player.h"
+#include "../ImageLoader/ImageLoader.h"
+
+Player::Player(float x, float y) : Rectangle(x, y, 200, 200)
+{
+	camera = new Camera2D(x, y, 1.0f);
+	InitAnimationPlayer();
+}
+
+void Player::Update(float deltaTime) {
+
+	// Move the player
+	direction.normalize();
+	float velocityX = direction.x * speed * deltaTime;
+	float velocityY = direction.y * speed * deltaTime;
+	X += velocityX;
+	Y += velocityY;
+
+	// Update the camera
+	camera->X = X;
+	camera->Y = Y;
+
+	// update the texture
+	texture = animationPlayer.GetNextTextureId();
+
+	Rectangle::Update(deltaTime);
+}
+
+void Player::NotifyInput(char key) {
+	if(key == 'w') {
+		direction.y = 1;
+		animationPlayer.SetCurrentTrackByName("RunUp");
+	}
+	else if(key == 's') {
+		direction.y = -1;
+		animationPlayer.SetCurrentTrackByName("RunDown");
+	}
+	else if(key == 'a') {
+		direction.x = -1;
+		animationPlayer.SetCurrentTrackByName("RunLeft");
+	}
+	else if(key == 'd') {
+		direction.x = 1;
+		animationPlayer.SetCurrentTrackByName("RunLeft");
+	}
+	else if (key == ' ') {
+		direction.x = 0;
+		direction.y = 0;
+
+		animationPlayer.SetCurrentTrackByName("Idle");
+	}
+}
+
+Camera2D* Player::GetCamera() const {
+	return camera;
+}
+
+void Player::InitAnimationPlayer() {
+	ImageLoader imageLoader;
+
+	string idlePath = resourcePath + "Idle/";
+	AnimationTrack* idleTrack = new AnimationTrack(imageLoader, idlePath, "Idle", 100);
+
+	string runLeftPath = resourcePath + "RunLeft/";
+	AnimationTrack* runLeftTrack = new AnimationTrack(imageLoader, runLeftPath, "RunLeft", 100);
+
+	string runUpPath = resourcePath + "RunUp/";
+	AnimationTrack* runUpTrack = new AnimationTrack(imageLoader, runUpPath, "RunUp", 100);
+
+	string runDownPath = resourcePath + "RunDown/";
+	AnimationTrack* runDownTrack = new AnimationTrack(imageLoader, runDownPath, "RunDown", 100);
+
+	animationPlayer.AddTrack(idleTrack);
+	animationPlayer.AddTrack(runLeftTrack);
+	animationPlayer.AddTrack(runUpTrack);
+	animationPlayer.AddTrack(runDownTrack);
+
+	animationPlayer.SetCurrentTrackByName("Idle");
+
+	texture = animationPlayer.GetNextTextureId();
+}
+
+Player::~Player()
+{
+	animationPlayer.~AnimationPlayer();
+	delete(camera);
+}
