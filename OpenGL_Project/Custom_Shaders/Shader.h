@@ -14,6 +14,8 @@ public:
     unsigned int ID;
     // constructor generates the shader on the fly
     // ------------------------------------------------------------------------
+
+    Shader(){}
     Shader(const char* vertexPath, const char* fragmentPath)
     {
         // 1. retrieve the vertex/fragment source code from filePath
@@ -89,6 +91,16 @@ public:
     void setFloat(const std::string& name, float value) const
     {
         glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+    }
+
+    void setVec3(const std::string& name, float a, float b, float c) 
+    {
+        glUniform3f(glGetUniformLocation(ID, name.c_str()), a, b, c);
+    }
+
+    void setVec2(const std::string& name, float a, float b)
+    {
+        glUniform2f(glGetUniformLocation(ID, name.c_str()), a, b);
     }
 
 private:

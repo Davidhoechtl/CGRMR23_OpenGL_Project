@@ -1,0 +1,25 @@
+#version 460 core
+out vec4 FragColor;
+  
+uniform vec3 objectColor;
+uniform vec3 lightColor;
+uniform vec2 lightPos;
+
+in vec2 FragPos;
+
+void main()
+{
+    //ambient
+    float ambientStrength = 0.5;
+    vec3 ambient = ambientStrength * lightColor;
+
+    //diffuse
+    float point_light_intensity = 4;
+    float distance = distance(lightPos, FragPos.xy);
+    float diffuse = 0.0;
+    if(distance <= point_light_intensity)
+        diffuse = 1.0 - abs(distance / point_light_intensity);
+
+    vec3 result = min(objectColor * ((lightColor * diffuse) + ambient), objectColor);
+    FragColor = vec4(result, 1.0);
+}
