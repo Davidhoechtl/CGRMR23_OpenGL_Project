@@ -166,6 +166,10 @@
     <None Include="Custom_Shaders\testVertexShader.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Custom_Shaders\lightingFragmentShader.txt" />
+    <Text Include="Custom_Shaders\lightingVertexShader.txt" />
+    <Text Include="Custom_Shaders\LightSourceFragmentShader.txt" />
+    <Text Include="Custom_Shaders\LightSourceVertexShader.txt" />
     <Text Include="Custom_Shaders\noTextureFragmentShader.txt" />
     <Text Include="Custom_Shaders\testFragmentShader.txt" />
     <Text Include="Custom_Shaders\textRenderingFragmentShader.txt" />

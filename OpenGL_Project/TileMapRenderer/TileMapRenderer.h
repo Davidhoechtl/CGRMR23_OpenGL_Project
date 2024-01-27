@@ -90,6 +90,15 @@ public:
         return translationMatrix;
     }
 
+    glm::vec2 GetTileMapCoordinates(float x, float y, int viewPortWidth, int viewPortHeight) 
+    {
+        float offsetX = -2;
+        float offsetY = 0.7;
+        glm::vec2 tileMapPos = glm::vec2((x + viewPortWidth) / (TileSize - TileTexPadding - TileTexSize) + offsetX, (y + viewPortHeight) / (TileSize - TileTexPadding - TileTexSize) + offsetY);
+
+        return tileMapPos;
+    }
+
     ~TileMapRenderer()
     {
         glDeleteVertexArrays(1, &VAO);

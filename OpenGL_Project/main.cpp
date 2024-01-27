@@ -212,28 +212,22 @@ int main()
 	float churchY = -302;
 	Rectangle church1(churchX, churchY, 70.0f, 100.0f);
 	Rectangle church9(churchX, churchY + 100, 70.0f, 100.0f);
-	//church1.SetShader(&noTextureShader);
 	church9.SetTexture(rockWallTexture);
 	church1.SetTexture(rockWallTexture);
 	Triangle church2(churchX, churchY + 170, 70.0f, 40.0f);
-	//church2.SetShader(&noTextureShader);
 	church2.SetTexture(churchRoofTexture);
-	Rectangle church3(churchX + 90, churchY, 150.0f, 100.0f);
+	Rectangle church3(churchX + 110, churchY, 150.0f, 100.0f);
 	church3.SetTexture(rockWallTexture);
-	//church3.SetShader(&noTextureShader);
-	Triangle church4(churchX + 90, churchY + 70, 150.0f, 40.0f);
-	//church4.SetShader(&noTextureShader);
+	Triangle church4(churchX + 110, churchY + 70, 150.0f, 40.0f);
 	church4.SetTexture(churchRoofTexture);
 	Rectangle church5(churchX, churchY + 110, 30.0f, 30.0f);
 	church5.SetTexture(clockTexture);
-	Rectangle church6(churchX + 90, churchY - 25, 30.0f, 50.0f);
+	Rectangle church6(churchX + 110, churchY - 25, 30.0f, 50.0f);
 	church6.SetShader(&noTextureShader);
 	Rectangle church7(churchX, churchY + 203, 5.0f, 30.0f);
 	Rectangle church8(churchX, churchY + 207, 5.0f, 20.0f);
 	church8.SetRotationZAxis(90.0f);
 
-	//church1.SetColor(0.92f, 0.89f, 0.87f);
-	//church3.SetColor(0.92f, 0.89f, 0.87f);
 	church2.SetColor(0.78f, 0.41f, 0.24f);
 	church4.SetColor(0.78f, 0.41f, 0.24f);
 	church6.SetColor(0.2f, 0.16f, 0.16f);
@@ -699,6 +693,22 @@ int main()
 	Rectangle lake12(lakeX, lakeY - 128, 96, 96);
 	lake12.SetTexture(waterTexture);
 
+	//LIGHTING
+	Shader lightSourceShader("Custom_Shaders/LightSourceVertexShader.txt", "Custom_Shaders/LightSourceFragmentShader.txt");
+	Shader lightingShader("Custom_Shaders/lightingVertexShader.txt", "Custom_Shaders/lightingFragmentShader.txt");
+	lightingShader.use();
+	lightingShader.setVec3("objectColor", 1.0f, 1.0f, 1.0f);
+	lightingShader.setVec3("lightColor", 1.0f, 0.7f, 0.11f);
+	lightingShader.setVec2("lightPos", 20, 20);
+	Rectangle lightSource(0, 0, 100, 100);
+	lightSource.SetShader(&lightSourceShader);
+
+	Rectangle lightingTest(100, 0, 70, 70);
+	lightingTest.SetShader(&lightingShader);
+
+	glm::vec2 lightPos = glm::vec2(20, 20);
+	glm::vec3 lightColor = glm::vec3(0.999f, 0.999f, 0.999f);
+
 	//TileMap (Floor)
 	TileMap tileMap(46, 40);
 
@@ -711,6 +721,9 @@ int main()
 	//createFarmField(&tileMap, 17, 34, 8, 5);
 	createFarmField(&tileMap, 33, 33, 11, 6);
 	TileMapRenderer tileMapRenderer(tileMap);
+	tileMapRenderer.shader->use();
+	tileMapRenderer.shader->setVec2("lightPos", lightPos.x, lightPos.y);
+	tileMapRenderer.shader->setVec3("lightColor", lightColor.x, lightColor.y, lightColor.z);
 
 	gameObjects.push_back(player);
 	gameObjects.push_back(&coin);
@@ -923,6 +936,9 @@ int main()
 
 		glm::mat4 tileMapProjectionMatrix = tileMapRenderer.GetProjectionMatrix(viewportWidth, viewportHeight, camera->X, camera->Y);
 		tileMapRenderer.Render(tileMapProjectionMatrix);
+
+		glm::vec2 lightPos = tileMapRenderer.GetTileMapCoordinates(player->X, player->Y, viewportWidth, viewportHeight);
+		tileMapRenderer.shader->setVec2("lightPos", lightPos.x, lightPos.y);
 
 		for_each(gameObjects.begin(), gameObjects.end(), [projectionMatrix](GameObject* obj) {
 			obj->Render(projectionMatrix);
