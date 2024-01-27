@@ -1,10 +1,27 @@
 #version 460 core
 out vec4 FragColor;
 in vec2 texCoord;
+in vec2 FragPos;
 
 uniform sampler2D texture0;
+uniform vec2 lightPos;
+uniform vec3 lightColor;
+
+float point_light_intensity = 4;
 
 void main()
 {
-    FragColor = texture(texture0, texCoord);
+    vec4 frag_color = texture(texture0, texCoord);
+
+    //ambient
+    float ambientStrength = 0.3;
+    vec3 ambient = ambientStrength * lightColor;
+
+    float distance = distance(lightPos, FragPos);
+    float diffuse = 0.0;
+    if(distance <= point_light_intensity)
+        diffuse = 1.0 - abs(distance / point_light_intensity);
+
+    vec3 result = min(frag_color.rgb * ((lightColor * diffuse) + ambient), frag_color.rgb);
+    FragColor = vec4(result, 1.0);
 }

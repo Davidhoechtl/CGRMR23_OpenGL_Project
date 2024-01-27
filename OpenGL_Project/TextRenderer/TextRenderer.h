@@ -23,6 +23,9 @@ public:
     FT_Face face;
     Shader s;
     unsigned int VAO, VBO;
+
+    TextRenderer(){}
+
     TextRenderer(const char* fontPath, int fontSize) : s("Custom_Shaders/textRenderingVertexShader.txt", "Custom_Shaders/textRenderingFragmentShader.txt")
     {
         if (FT_Init_FreeType(&ft))

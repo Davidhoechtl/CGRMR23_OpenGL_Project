@@ -20,6 +20,7 @@ public:
 	const int TileSize = 32;
 	const float TileTexSize = (float)1 / 16;
 	const float TileTexPadding = (float)1 / 256;
+    Shader* shader;
 
 	TileMapRenderer(TileMap tileMap)
 	{
@@ -108,7 +109,6 @@ public:
     }
 
 private:
-	Shader* shader;
     unsigned int VAO = 0;
     unsigned int VBO = 0;
 	int backBufferWidth, backBufferHeight;
