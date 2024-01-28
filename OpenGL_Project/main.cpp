@@ -910,6 +910,7 @@ int main()
         StaticGameInfo::GameTime += deltaTime;
         lastFrame = currentFrame;
 
+		//TODO: Lock movement when all coins are collected
 		processInput(window, deltaTime);
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -934,7 +935,12 @@ int main()
 		});
 
 		glm::mat4 textProjectionMatrix = glm::ortho(0.0f, static_cast<float>(viewportWidth), 0.0f, static_cast<float>(viewportHeight));
+		//TODO: display correct amount of coins collected and max amount of coins
 		textRenderer.RenderText("Coins: 0/1", 620.0f, 550.0f, 0.7f, glm::vec3(1, 1.0f, 1.0f), textProjectionMatrix);
+
+		//display when game is over
+		//textRenderer.RenderText("You collected all coins!", 150.0f, 300.0f, 1, glm::vec3(1, 1, 1), textProjectionMatrix);
+		//textRenderer.RenderText("You win!", 300.0f, 250.0f, 1, glm::vec3(1, 1, 1), textProjectionMatrix);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
