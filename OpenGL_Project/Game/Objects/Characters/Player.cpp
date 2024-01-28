@@ -16,9 +16,32 @@ void Player::Update(float deltaTime) {
 	X += velocityX;
 	Y += velocityY;
 
+	// Stop player at border
+	int borderTop = 650;
+	int borderBot = -610;
+	int borderRight = 720;
+	int borderLeft = -720;
+
+	if (X >= borderRight)
+		X = borderRight;
+
+	if (X <= borderLeft)
+		X = borderLeft;
+
+	if (Y <= borderBot)
+		Y = borderBot;
+
+	if (Y >= borderTop)
+		Y = borderTop;
+	
 	// Update the camera
-	camera->X = X;
-	camera->Y = Y;
+	int cameraWidth = 380;
+	int cameraHeight = 270;
+	if(X <= borderRight - cameraWidth && X >= borderLeft + cameraWidth)
+		camera->X = X;
+
+	if(Y <= borderTop - cameraHeight + 40 && Y >= borderBot + cameraHeight)
+		camera->Y = Y;
 
 	// update the texture
 	texture = animationPlayer.GetNextTextureId();
