@@ -3,17 +3,21 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aColor;
 layout (location = 2) in vec2 aTexCoord;
-layout (location = 3) in vec3 aNormal;
 
 out vec3 ourColor;
 out vec2 TexCoord;
+out vec2 FragPos;
 
 uniform mat4 transform;
 uniform mat4 projection;
+
+vec4 world_Pos;
 
 void main()
 {
    gl_Position = projection * transform * vec4(aPos.x, aPos.y, aPos.z, 1.0);
    ourColor = aColor;
+   world_Pos = transform * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+   FragPos = vec2(world_Pos.x, world_Pos.y);
    TexCoord = aTexCoord;	
 }

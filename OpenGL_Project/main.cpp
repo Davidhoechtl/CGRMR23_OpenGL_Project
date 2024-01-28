@@ -79,7 +79,6 @@ int main()
 	glfwGetFramebufferSize(window, &viewportWidth, &viewportHeight);
 	// setup shader
 	TextRenderer textRenderer("fonts/arial.ttf", 48);
-	Shader ourShader("Custom_Shaders/testVertexShader.txt", "Custom_Shaders/testFragmentShader.txt");
 	Shader noTextureShader("Custom_Shaders/testVertexShader.txt", "Custom_Shaders/noTextureFragmentShader.txt");
 	unsigned int texture = imageLoader.loadImage("Ressources/container.jpg", false);
 	unsigned int coinTexture = imageLoader.loadTransparentImage("Ressources/coin.png", true);
@@ -694,18 +693,6 @@ int main()
 	lake12.SetTexture(waterTexture);
 
 	//LIGHTING
-	Shader lightSourceShader("Custom_Shaders/LightSourceVertexShader.txt", "Custom_Shaders/LightSourceFragmentShader.txt");
-	Shader lightingShader("Custom_Shaders/lightingVertexShader.txt", "Custom_Shaders/lightingFragmentShader.txt");
-	lightingShader.use();
-	lightingShader.setVec3("objectColor", 1.0f, 1.0f, 1.0f);
-	lightingShader.setVec3("lightColor", 1.0f, 0.7f, 0.11f);
-	lightingShader.setVec2("lightPos", 20, 20);
-	Rectangle lightSource(0, 0, 100, 100);
-	lightSource.SetShader(&lightSourceShader);
-
-	Rectangle lightingTest(100, 0, 70, 70);
-	lightingTest.SetShader(&lightingShader);
-
 	glm::vec2 lightPos = glm::vec2(20, 20);
 	glm::vec3 lightColor = glm::vec3(0.999f, 0.999f, 0.999f);
 
@@ -942,6 +929,8 @@ int main()
 
 		for_each(gameObjects.begin(), gameObjects.end(), [projectionMatrix](GameObject* obj) {
 			obj->Render(projectionMatrix);
+			obj->shader->setVec2("lightPos", player->X, player->Y);
+			obj->shader->setVec3("lightColor", 0.999f, 0.999f, 0.999f);
 		});
 
 		glm::mat4 textProjectionMatrix = glm::ortho(0.0f, static_cast<float>(viewportWidth), 0.0f, static_cast<float>(viewportHeight));
