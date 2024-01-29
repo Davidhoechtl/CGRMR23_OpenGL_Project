@@ -954,7 +954,7 @@ int main()
 
 		glm::mat4 textProjectionMatrix = glm::ortho(0.0f, static_cast<float>(viewportWidth), 0.0f, static_cast<float>(viewportHeight));
 		//TODO: display correct amount of coins collected and max amount of coins
-		textRenderer.RenderText("Coins: 0/1", 620.0f, 550.0f, 0.7f, glm::vec3(1, 1.0f, 1.0f), textProjectionMatrix);
+		textRenderer.RenderText("Coins: "+ to_string(player->score), 620.0f, 550.0f, 0.7f, glm::vec3(1, 1.0f, 1.0f), textProjectionMatrix);
 
 		//display when game is over
 		//textRenderer.RenderText("You collected all coins!", 150.0f, 300.0f, 1, glm::vec3(1, 1, 1), textProjectionMatrix);
