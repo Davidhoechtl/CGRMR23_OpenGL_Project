@@ -142,16 +142,19 @@
     <ClCompile Include="include\glad.c" />
     <ClCompile Include="include\stb_image_imp.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Game\Objects\Rectangle.cpp" />
     <ClCompile Include="Game\Objects\Characters\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Objects\Coin.h" />
+    <ClInclude Include="Game\Utils\CollisionMask.h" />
+    <ClInclude Include="Game\Objects\Collider.h" />
     <ClInclude Include="Game\AnimationPlayer\AnimationTrack.h" />
     <ClInclude Include="Game\AnimationPlayer\AnimationPlayer.h" />
     <ClInclude Include="Custom_Shaders\Shader.h" />
     <ClInclude Include="Game\Camera.h" />
     <ClInclude Include="Game\Objects\GameObject.h" />
     <ClInclude Include="Game\Objects\Triangle.h" />
+    <ClInclude Include="Game\Objects\IHasCollision.h" />
     <ClInclude Include="ImageLoader\ImageLoader.h" />
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="Game\Objects\Rectangle.h" />

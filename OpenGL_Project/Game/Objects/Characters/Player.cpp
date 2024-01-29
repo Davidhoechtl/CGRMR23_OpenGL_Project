@@ -1,10 +1,12 @@
 #include "Player.h"
 #include "../ImageLoader/ImageLoader.h"
+#include "../Coin.h"
 
-Player::Player(float x, float y) : Rectangle(x, y, 200, 200)
+Player::Player(float x, float y) : Rectangle(x, y, 150, 150)
 {
 	camera = new Camera2D(x, y, 1.0f);
 	InitAnimationPlayer();
+	SetupCollider(x, y, 50, 75); // sets up collider
 }
 
 void Player::Update(float deltaTime) {
@@ -13,56 +15,71 @@ void Player::Update(float deltaTime) {
 	direction.normalize();
 	float velocityX = direction.x * speed * deltaTime;
 	float velocityY = direction.y * speed * deltaTime;
-	X += velocityX;
-	Y += velocityY;
 
-	// Stop player at border
-	int borderTop = 650;
-	int borderBot = -610;
-	int borderRight = 720;
-	int borderLeft = -720;
+	IHasCollision* collision = collisionMask->MoveAndCollide(dynamic_cast<IHasCollision*>(this), velocityX, velocityY);
+	Coin* coin = dynamic_cast<Coin*>(collision);
+	if (coin != nullptr) {
+		coin->toBeDestroyed = true;
+		collisionMask->RemoveCollider(coin);
+	}
 
-	if (X >= borderRight)
-		X = borderRight;
+	if (collision == nullptr) {
+		X += velocityX;
+		Y += velocityY;
 
-	if (X <= borderLeft)
-		X = borderLeft;
+		// Stop player at border
+		int borderTop = 650;
+		int borderBot = -610;
+		int borderRight = 720;
+		int borderLeft = -720;
 
-	if (Y <= borderBot)
-		Y = borderBot;
+		if (X >= borderRight)
+			X = borderRight;
 
-	if (Y >= borderTop)
-		Y = borderTop;
-	
-	// Update the camera
-	int cameraWidth = 380;
-	int cameraHeight = 270;
-	if(X <= borderRight - cameraWidth && X >= borderLeft + cameraWidth)
-		camera->X = X;
+		if (X <= borderLeft)
+			X = borderLeft;
 
-	if(Y <= borderTop - cameraHeight + 40 && Y >= borderBot + cameraHeight)
-		camera->Y = Y;
+		if (Y <= borderBot)
+			Y = borderBot;
+
+		if (Y >= borderTop)
+			Y = borderTop;
+
+		// Update the camera
+		int cameraWidth = 380;
+		int cameraHeight = 270;
+		if (X <= borderRight - cameraWidth && X >= borderLeft + cameraWidth)
+			camera->X = X;
+
+		if (Y <= borderTop - cameraHeight + 40 && Y >= borderBot + cameraHeight)
+			camera->Y = Y;
+
+		// Update the collider
+		collider->X = X;
+		collider->Y = Y;
+	}
 
 	// update the texture
 	texture = animationPlayer.GetNextTextureId();
 
 	Rectangle::Update(deltaTime);
+	collider->Update(deltaTime);
 }
 
 void Player::NotifyInput(char key) {
-	if(key == 'w') {
+	if (key == 'w') {
 		direction.y = 1;
 		animationPlayer.SetCurrentTrackByName("RunUp");
 	}
-	else if(key == 's') {
+	else if (key == 's') {
 		direction.y = -1;
 		animationPlayer.SetCurrentTrackByName("RunDown");
 	}
-	else if(key == 'a') {
+	else if (key == 'a') {
 		direction.x = -1;
 		animationPlayer.SetCurrentTrackByName("RunLeft");
 	}
-	else if(key == 'd') {
+	else if (key == 'd') {
 		direction.x = 1;
 		animationPlayer.SetCurrentTrackByName("RunLeft");
 	}
@@ -72,6 +89,13 @@ void Player::NotifyInput(char key) {
 
 		animationPlayer.SetCurrentTrackByName("Idle");
 	}
+}
+
+bool Player::CheckCollision(const Collider& other) {
+	if (collider == nullptr)
+		return false;
+
+	return collider->CollidesWith(other);
 }
 
 Camera2D* Player::GetCamera() const {

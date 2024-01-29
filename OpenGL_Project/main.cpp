@@ -16,6 +16,7 @@
 
 #include "Game/Objects/Rectangle.h"
 #include "Game/Objects/Triangle.h"
+#include "Game/Objects/Coin.h"
 #include "Game/Camera.h"
 #include "Game/Objects/Characters/Player.h"
 
@@ -39,6 +40,7 @@ float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
 Player* player = nullptr;
+CollisionMask* collisionMask = nullptr;
 
 // game objects
 vector<GameObject*> gameObjects;
@@ -92,10 +94,15 @@ int main()
 	unsigned int treeTexture = imageLoader.loadImage("Ressources/Tree.png", true);
 	unsigned int waterTexture = imageLoader.loadImage("Ressources/Water.jpg", true);
 
-	Rectangle coin(100.0f, 100.0f, 50.0f, 50.0f);
-	coin.SetTexture(coinTexture);
+	Coin coin(200, 0);
+	Coin coin2(0, 200);
+
+	collisionMask = new CollisionMask();
+	collisionMask->AddCollider(&coin);
+	collisionMask->AddCollider(&coin2);
 
 	player = new Player(200, 200);
+	player->SetCollisionMask(collisionMask);
 
 	//FARMING HOUSE
 	Rectangle farmingHouse1(-600.0f, 430.0f, 170.0f, 120.0f);
@@ -714,6 +721,7 @@ int main()
 
 	gameObjects.push_back(player);
 	gameObjects.push_back(&coin);
+	gameObjects.push_back(&coin2);
 	gameObjects.push_back(&farmingHouse1);
 	gameObjects.push_back(&farmingHouse2);
 	gameObjects.push_back(&farmingHouse3);
@@ -902,13 +910,13 @@ int main()
 
 	Camera2D* camera = player->GetCamera();
 
-    //rendering loop
-    while (!glfwWindowShouldClose(window))
-    {
-        float currentFrame = static_cast<float>(glfwGetTime());
-        deltaTime = currentFrame - lastFrame;
-        StaticGameInfo::GameTime += deltaTime;
-        lastFrame = currentFrame;
+	//rendering loop
+	while (!glfwWindowShouldClose(window))
+	{
+		float currentFrame = static_cast<float>(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		StaticGameInfo::GameTime += deltaTime;
+		lastFrame = currentFrame;
 
 		//TODO: Lock movement when all coins are collected
 		processInput(window, deltaTime);
@@ -916,9 +924,19 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-        for_each(gameObjects.begin(), gameObjects.end(), [](GameObject* obj) {
-            obj->Update(deltaTime);
-        });
+		for_each(gameObjects.begin(), gameObjects.end(), [](GameObject* obj) {
+			if (obj->toBeDestroyed) {
+				gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), obj), gameObjects.end());
+			}
+			else {
+				obj->Update(deltaTime);
+			}
+		});
+
+
+		for_each(gameObjects.begin(), gameObjects.end(), [](GameObject* obj) {
+			obj->Update(deltaTime);
+			});
 
 		glm::mat4 projectionMatrix = camera->GetProjectionMatrix(viewportWidth, viewportHeight);
 
@@ -932,7 +950,7 @@ int main()
 			obj->Render(projectionMatrix);
 			obj->shader->setVec2("lightPos", player->X, player->Y);
 			obj->shader->setVec3("lightColor", 0.999f, 0.999f, 0.999f);
-		});
+			});
 
 		glm::mat4 textProjectionMatrix = glm::ortho(0.0f, static_cast<float>(viewportWidth), 0.0f, static_cast<float>(viewportHeight));
 		//TODO: display correct amount of coins collected and max amount of coins
@@ -947,6 +965,7 @@ int main()
 	}
 
 	delete(player);
+	delete(collisionMask);
 
 	//cleans all GLFW ressources
 	glfwTerminate();
@@ -994,13 +1013,13 @@ GLenum errorCheck()
 	return code;
 }
 
-void createFarmField(TileMap* tileMap, int x, int y, int width, int height) 
+void createFarmField(TileMap* tileMap, int x, int y, int width, int height)
 {
-	for (int i = 0; i < width; ++i) 
+	for (int i = 0; i < width; ++i)
 	{
-		for (int j = 0; j < height; ++j) 
+		for (int j = 0; j < height; ++j)
 		{
-			if(i % 2 == 0)
+			if (i % 2 == 0)
 				tileMap->Tiles[(x + i) + (y + j) * tileMap->Width] = 1;
 			else
 				tileMap->Tiles[(x + i) + (y + j) * tileMap->Width] = 0;
@@ -1044,17 +1063,17 @@ void createRoad(TileMap* tileMap)
 	createRoad3x3(tileMap, 39, 14);
 }
 
-void createRoad3x3(TileMap* tileMap, int centerX, int centerY) 
+void createRoad3x3(TileMap* tileMap, int centerX, int centerY)
 {
-	tileMap->Tiles[(centerX) + (centerY) * tileMap->Width] = 0;
-	tileMap->Tiles[(centerX - 1)+(centerY)*tileMap->Width] = 0;
-	tileMap->Tiles[(centerX + 1)+(centerY)*tileMap->Width] = 0;
-	tileMap->Tiles[(centerX - 1)+(centerY - 1)*tileMap->Width] = 0;
-	tileMap->Tiles[(centerX)+(centerY - 1)*tileMap->Width] = 0;
-	tileMap->Tiles[(centerX + 1)+(centerY + 1)*tileMap->Width] = 0;
-	tileMap->Tiles[(centerX)+(centerY + 1)*tileMap->Width] = 0;
-	tileMap->Tiles[(centerX + 1)+(centerY - 1)*tileMap->Width] = 0;
-	tileMap->Tiles[(centerX - 1)+(centerY + 1)*tileMap->Width] = 0;
+	tileMap->Tiles[(centerX)+(centerY)*tileMap->Width] = 0;
+	tileMap->Tiles[(centerX - 1) + (centerY)*tileMap->Width] = 0;
+	tileMap->Tiles[(centerX + 1) + (centerY)*tileMap->Width] = 0;
+	tileMap->Tiles[(centerX - 1) + (centerY - 1) * tileMap->Width] = 0;
+	tileMap->Tiles[(centerX)+(centerY - 1) * tileMap->Width] = 0;
+	tileMap->Tiles[(centerX + 1) + (centerY + 1) * tileMap->Width] = 0;
+	tileMap->Tiles[(centerX)+(centerY + 1) * tileMap->Width] = 0;
+	tileMap->Tiles[(centerX + 1) + (centerY - 1) * tileMap->Width] = 0;
+	tileMap->Tiles[(centerX - 1) + (centerY + 1) * tileMap->Width] = 0;
 
 }
 

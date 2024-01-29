@@ -11,6 +11,7 @@
 class GameObject
 {
 	public:
+		bool toBeDestroyed = false;
 		float X, Y;
 		Shader* shader = nullptr;
 
@@ -20,6 +21,11 @@ class GameObject
 
 			// Default shader
 			shader = new Shader("Custom_Shaders/testVertexShader.txt", "Custom_Shaders/testFragmentShader.txt");
+		}
+
+		~GameObject() {
+			// cleanup gameobject
+			delete shader;
 		}
 
 		void SetRotationZAxis(float angle) 
