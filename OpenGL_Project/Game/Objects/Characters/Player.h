@@ -10,7 +10,7 @@
 class Player : public Rectangle, public IHasCollision
 {
 	public:
-		int speed = 200;
+		int speed = 100;
 		int score = 0;
 		
 		Player(float x, float y);
