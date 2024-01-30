@@ -96,7 +96,7 @@ int main()
 	unsigned int treeTexture = imageLoader.loadImage("Ressources/Tree.png", true);
 	unsigned int waterTexture = imageLoader.loadImage("Ressources/Water.jpg", true);
 
-	CoinGenerator coinGenerator(5);
+	CoinGenerator coinGenerator(8);
 
 	collisionMask = new CollisionMask();
 
@@ -721,7 +721,7 @@ int main()
 	tileMapRenderer.shader->setVec2("lightPos", lightPos.x, lightPos.y);
 	tileMapRenderer.shader->setVec3("lightColor", lightColor.x, lightColor.y, lightColor.z);
 
-	gameObjects.push_back(player);
+	
 
 	for (auto& coin : coinGenerator.coins)
 	{
@@ -910,6 +910,7 @@ int main()
 	gameObjects.push_back(&tree162);
 	gameObjects.push_back(&tree163);
 	gameObjects.push_back(&tree164);
+	gameObjects.push_back(player);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
