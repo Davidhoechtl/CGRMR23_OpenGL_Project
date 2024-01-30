@@ -64,7 +64,7 @@ void Player::Update(float deltaTime) {
 	texture = animationPlayer.GetNextTextureId();
 
 	Rectangle::Update(deltaTime);
-	collider->Update(deltaTime);
+	//collider->Update(deltaTime);
 }
 
 void Player::NotifyInput(char key) {

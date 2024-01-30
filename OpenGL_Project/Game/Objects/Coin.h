@@ -23,7 +23,7 @@ class Coin : public Rectangle, public IHasCollision
 
 		void Render(const glm::mat4 cameraProjectionMatrix) override {
 			Rectangle::Render(cameraProjectionMatrix);
-			collider->Render(cameraProjectionMatrix);
+			//collider->Render(cameraProjectionMatrix);
 		}
 
 		bool CheckCollision(const Collider& other) override {

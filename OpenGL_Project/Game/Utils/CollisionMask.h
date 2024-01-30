@@ -45,8 +45,8 @@ class CollisionMask
 		}
 
 		~CollisionMask() {
-			for(IHasCollision* collider : colliders)
-				delete collider;
+			//for(IHasCollision* collider : colliders)
+			//	delete collider;
 		}
 
 	private:

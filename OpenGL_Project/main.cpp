@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <time.h>
 #include "Custom_Shaders/Shader.h"
 #include "ImageLoader/ImageLoader.h" 
 #include "TextRenderer/TextRenderer.h"
@@ -23,6 +24,7 @@
 #include "TileMapRenderer/TileMap.h";
 #include "TileMapRenderer/TileMapRenderer.h"
 #include "Game/Utils/StaticGameInfo.h"
+#include "Game/Utils/CoinGenerator.h"
 
 using namespace std;
 
@@ -94,12 +96,14 @@ int main()
 	unsigned int treeTexture = imageLoader.loadImage("Ressources/Tree.png", true);
 	unsigned int waterTexture = imageLoader.loadImage("Ressources/Water.jpg", true);
 
-	Coin coin(200, 0);
-	Coin coin2(0, 200);
+	CoinGenerator coinGenerator(5);
 
 	collisionMask = new CollisionMask();
-	collisionMask->AddCollider(&coin);
-	collisionMask->AddCollider(&coin2);
+
+	for (auto& coin : coinGenerator.coins) 
+	{
+		collisionMask->AddCollider(coin);
+	}
 
 	player = new Player(200, 200);
 	player->SetCollisionMask(collisionMask);
@@ -109,10 +113,8 @@ int main()
 	Rectangle farmingHouse2(-600.0f, 520.0f, 120.0f, 60.0f);
 	Triangle farmingHouse3(-600.0f, 570.0f, 120.0f, 40.0f);
 	Rectangle farmingHouse4(-658.0f, 515.0f, 65.0f, 30.0f);
-	//farmingHouse4.SetTexture(texture);
 	farmingHouse4.SetRotationZAxis(67);
 	Rectangle farmingHouse5(-542.0f, 515.0f, 65.0f, 30.0f);
-	//farmingHouse5.SetTexture(texture);
 	farmingHouse5.SetRotationZAxis(293);
 
 	Rectangle farmingHouseRoof1(-630.0f, 570.0f, 90.0f, 10.0f);
@@ -720,8 +722,12 @@ int main()
 	tileMapRenderer.shader->setVec3("lightColor", lightColor.x, lightColor.y, lightColor.z);
 
 	gameObjects.push_back(player);
-	gameObjects.push_back(&coin);
-	gameObjects.push_back(&coin2);
+
+	for (auto& coin : coinGenerator.coins)
+	{
+		gameObjects.push_back(coin);
+	}
+
 	gameObjects.push_back(&farmingHouse1);
 	gameObjects.push_back(&farmingHouse2);
 	gameObjects.push_back(&farmingHouse3);
@@ -918,8 +924,10 @@ int main()
 		StaticGameInfo::GameTime += deltaTime;
 		lastFrame = currentFrame;
 
-		//TODO: Lock movement when all coins are collected
-		processInput(window, deltaTime);
+		if (player->score < coinGenerator.coinAmount)
+			processInput(window, deltaTime);
+		else
+			player->NotifyInput(' ');
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -936,7 +944,7 @@ int main()
 
 		for_each(gameObjects.begin(), gameObjects.end(), [](GameObject* obj) {
 			obj->Update(deltaTime);
-			});
+		});
 
 		glm::mat4 projectionMatrix = camera->GetProjectionMatrix(viewportWidth, viewportHeight);
 
@@ -950,16 +958,18 @@ int main()
 			obj->Render(projectionMatrix);
 			obj->shader->setVec2("lightPos", player->X, player->Y);
 			obj->shader->setVec3("lightColor", 0.999f, 0.999f, 0.999f);
-			});
+		});
 
 		glm::mat4 textProjectionMatrix = glm::ortho(0.0f, static_cast<float>(viewportWidth), 0.0f, static_cast<float>(viewportHeight));
-		//TODO: display correct amount of coins collected and max amount of coins
-		textRenderer.RenderText("Coins: "+ to_string(player->score), 620.0f, 550.0f, 0.7f, glm::vec3(1, 1.0f, 1.0f), textProjectionMatrix);
+		textRenderer.RenderText("Coins: "+ to_string(player->score) + "/" + to_string(coinGenerator.coinAmount), 620.0f, 550.0f, 0.7f, glm::vec3(1, 1.0f, 1.0f), textProjectionMatrix);
 
 		//display when game is over
-		//textRenderer.RenderText("You collected all coins!", 150.0f, 300.0f, 1, glm::vec3(1, 1, 1), textProjectionMatrix);
-		//textRenderer.RenderText("You win!", 300.0f, 250.0f, 1, glm::vec3(1, 1, 1), textProjectionMatrix);
-
+		if (player->score >= coinGenerator.coinAmount) 
+		{
+			textRenderer.RenderText("You collected all coins!", 150.0f, 300.0f, 1, glm::vec3(1, 1, 1), textProjectionMatrix);
+			textRenderer.RenderText("You win!", 300.0f, 250.0f, 1, glm::vec3(1, 1, 1), textProjectionMatrix);
+		}
+		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

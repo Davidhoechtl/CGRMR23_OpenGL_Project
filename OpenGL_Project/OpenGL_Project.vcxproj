@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Objects\Coin.h" />
+    <ClInclude Include="Game\Utils\CoinGenerator.h" />
     <ClInclude Include="Game\Utils\CollisionMask.h" />
     <ClInclude Include="Game\Objects\Collider.h" />
     <ClInclude Include="Game\AnimationPlayer\AnimationTrack.h" />

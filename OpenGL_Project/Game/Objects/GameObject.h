@@ -25,7 +25,7 @@ class GameObject
 
 		~GameObject() {
 			// cleanup gameobject
-			delete shader;
+			//delete shader;
 		}
 
 		void SetRotationZAxis(float angle) 
