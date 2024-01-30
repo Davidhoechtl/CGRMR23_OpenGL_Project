@@ -58,7 +58,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	//create window context
-	GLFWwindow* window = glfwCreateWindow(800, 600, "Name TBD", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(800, 600, "Village Mugger", NULL, NULL);
 	if (window == NULL)
 	{
 		cout << "Failed to create GLFW window" << endl;
