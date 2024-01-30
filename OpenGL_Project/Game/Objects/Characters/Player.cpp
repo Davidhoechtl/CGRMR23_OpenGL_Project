@@ -22,6 +22,8 @@ void Player::Update(float deltaTime) {
 		coin->toBeDestroyed = true;
 		collisionMask->RemoveCollider(coin);
 		score++;
+
+		collision = nullptr;
 	}
 
 	if (collision == nullptr) {
